@@ -121,8 +121,9 @@ namespace ParametricCamp2023SVVPrepare
 
                 spiral.Append(arc0);
                 spiral.Append(arc1);
+                
             }
-
+            
             return spiral;
         }
 
