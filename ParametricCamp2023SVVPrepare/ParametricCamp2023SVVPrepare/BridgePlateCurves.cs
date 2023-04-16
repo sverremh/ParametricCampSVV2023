@@ -142,7 +142,7 @@ namespace ParametricCamp2023SVVPrepare
         public List<Curve> ReorientedSectionCurves(Plane refPlane, List<Plane> newPlanes, Curve sectionCurve)
         {
             List<Curve> orientedCurves = new List<Curve>(); // initiate empty list for the oriented curves
-            
+            // https://discourse.mcneel.com/t/orient-function-in-rhinocommon/48914/9
             for (int i = 0; i < newPlanes.Count; i++)
             {
                 
