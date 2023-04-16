@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
+using Rhino.Geometry.Intersect;
 
 namespace ParametricCamp2023SVVPrepare
 {
@@ -29,6 +31,7 @@ namespace ParametricCamp2023SVVPrepare
             pManager.AddCurveParameter("Right curve", "rCurve", "Right curve of the bridge deck", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Count", "count", "Number of divisions", GH_ParamAccess.item);
             pManager.AddCurveParameter("SectionCurves", "secCrvs", "Curves for the plate section", GH_ParamAccess.list);
+            pManager.AddPlaneParameter("Plane", "p", "Reference plane for section curves. World XY by default", GH_ParamAccess.item, Plane.WorldXY); 
         }
 
         /// <summary>
@@ -51,12 +54,14 @@ namespace ParametricCamp2023SVVPrepare
             Curve rightCurve = null;
             int div = 0;
             List<Curve> sections= new List<Curve>();
+            Plane sectionPlane = new Plane();
 
             if (!DA.GetData(0, ref centerCurve)) return;
             if (!DA.GetData(1, ref leftCurve)) return;
             if (!DA.GetData(2, ref rightCurve)) return;
             if (!DA.GetData(3, ref div)) return;
             if (!DA.GetDataList(4, sections)) return;
+            if (!DA.GetData(5, ref sectionPlane)) return;
 
 
             // -- method --
@@ -70,10 +75,35 @@ namespace ParametricCamp2023SVVPrepare
             {
                 _ = tangent.Unitize(); // Unitize all the vectors.
             }
+
+
+            // use the xy-tangent as plane normals
+            guidePlanes = guidePlanes.Zip(xyTangents, (plane, vector) => new Plane(plane.Origin, vector)).ToArray(); //
+
             Vector3d[] crossProduct = guidePlanes.Select(p => Vector3d.CrossProduct(p.Normal, Vector3d.ZAxis)).ToArray(); // get the cross product between global z- and tangent vectors
 
+            Plane[] testPlanes = guidePlanes.Zip(crossProduct, (plane, x) => new Plane(plane.Origin, x, Vector3d.ZAxis))
+                .ToArray();
 
-            // 2: Extend the curves
+            // 2: Extend the curves with x percent of original length
+            double curveExtension = 0.05;
+            leftCurve = leftCurve.Extend(CurveEnd.Both, leftCurve.GetLength() * curveExtension, CurveExtensionStyle.Smooth);
+            rightCurve = rightCurve.Extend(CurveEnd.Both, rightCurve.GetLength() * curveExtension, CurveExtensionStyle.Smooth);
+
+            // 3: Intersect left and right curves with middle planes
+            List<Plane> leftPlanes = IntersectionPlanes(leftCurve, guidePlanes); // base planes for left cross section curves
+            List<Plane> rightPlanes = IntersectionPlanes(rightCurve, guidePlanes); // base planes for right cross section curves
+
+            // 4 move the section curves along the guides.
+            List<Curve> leftSections = ReorientedSectionCurves(sectionPlane, leftPlanes, sections[2]); // the third item in the list should be the second curve
+            List<Curve> rightSections = ReorientedSectionCurves(sectionPlane, rightPlanes, sections[3]); // the fourth item is right curve
+            List<Curve> middleTopSections = ReorientedSectionCurves(sectionPlane, guidePlanes.ToList(), sections[0]); // the first item is top middle curve
+            List<Curve> middleBottomSections = ReorientedSectionCurves(sectionPlane, guidePlanes.ToList(), sections[1]); // the second item is bottom middle curve
+
+            // 5 Connect the curves at each section. 
+
+            // 6 Loft an Cap the curves
+
 
 
 
@@ -88,6 +118,57 @@ namespace ParametricCamp2023SVVPrepare
             // Get perp frames along the length
             var result = crv.GetPerpendicularFrames(tList);
             return result;
+        }
+
+        public List<Plane> IntersectionPlanes(Curve crv, Plane[] pArray)
+        {
+            List<Plane> interPlanes = new List<Plane>();
+            
+            foreach (var p in pArray)
+            {
+                CurveIntersections intersection = Intersection.CurvePlane(crv, p, 0.001);
+                if (intersection[0].IsPoint)
+                {
+                    Point3d pt = intersection[0].PointA;
+                    Plane movedPlane = new Plane(pt, p.Normal);
+                    interPlanes.Add(movedPlane);
+                }
+            }
+            
+
+            return interPlanes;
+        }
+
+        public List<Curve> ReorientedSectionCurves(Plane refPlane, List<Plane> newPlanes, Curve sectionCurve)
+        {
+            List<Curve> orientedCurves = new List<Curve>(); // initiate empty list for the oriented curves
+            
+            for (int i = 0; i < newPlanes.Count; i++)
+            {
+                
+                // Choose Target points. 
+                // I use two points along the X-axis 
+                // since I wanted my shape to align with the X-axis
+                Plane toPlane = newPlanes[i];
+
+                Transform xFormMove = Transform.Translation(toPlane.Origin - refPlane.Origin); // Moving from origin to target on guide curve
+                Transform xFormScale = Transform.Identity; // we do not want to scale the geometry
+                
+                var v0 = refPlane.Normal;
+                var v1 = toPlane.Normal;
+                Transform xFormRotate = Transform.Rotation(v0, v1, sectionCurve.PointAtStart);
+                Transform xFormFinal = xFormMove * xFormScale * xFormRotate;
+                
+                Transform.ChangeBasis(refPlane.XAxis, refPlane.YAxis, refPlane.ZAxis, newPlanes[i].XAxis,
+                    newPlanes[i].YAxis, newPlanes[i].ZAxis);
+                //var trans = Transform.PlaneToPlane(refPlane, newPlanes[i]);
+                
+                orientedCurves.Add(sectionCurve.DuplicateCurve());
+                orientedCurves[i].Transform(xFormFinal);
+            } 
+
+            return orientedCurves;
+
         }
 
         /// <summary>
