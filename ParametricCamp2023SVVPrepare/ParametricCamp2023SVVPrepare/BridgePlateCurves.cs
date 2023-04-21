@@ -66,7 +66,7 @@ namespace ParametricCamp2023SVVPrepare
 
             // -- method --
 
-            // 1: Divide the guide curve and create planes along the length
+            // -- 1: Divide the guide curve and create planes along the length
             Plane[] guidePlanes = PlanesAlongCurve(centerCurve, div); // get the frames along the curve. 
             
             // create xy tangents
@@ -85,31 +85,63 @@ namespace ParametricCamp2023SVVPrepare
             Plane[] testPlanes = guidePlanes.Zip(crossProduct, (plane, x) => new Plane(plane.Origin, x, Vector3d.ZAxis))
                 .ToArray();
 
-            // 2: Extend the curves with x percent of original length
+            // -- 2: Extend the curves with x percent of original length
             double curveExtension = 0.05;
             leftCurve = leftCurve.Extend(CurveEnd.Both, leftCurve.GetLength() * curveExtension, CurveExtensionStyle.Smooth);
             rightCurve = rightCurve.Extend(CurveEnd.Both, rightCurve.GetLength() * curveExtension, CurveExtensionStyle.Smooth);
 
-            // 3: Intersect left and right curves with middle planes
+            // -- 3: Intersect left and right curves with middle planes
             List<Plane> leftPlanes = IntersectionPlanes(leftCurve, guidePlanes); // base planes for left cross section curves
             List<Plane> rightPlanes = IntersectionPlanes(rightCurve, guidePlanes); // base planes for right cross section curves
 
-            // 4 move the section curves along the guides.
+            // -- 4 move the section curves along the guides.
             List<Curve> leftSections = ReorientedSectionCurves(sectionPlane, leftPlanes, sections[2]); // the third item in the list should be the second curve
             List<Curve> rightSections = ReorientedSectionCurves(sectionPlane, rightPlanes, sections[3]); // the fourth item is right curve
             List<Curve> middleTopSections = ReorientedSectionCurves(sectionPlane, guidePlanes.ToList(), sections[0]); // the first item is top middle curve
             List<Curve> middleBottomSections = ReorientedSectionCurves(sectionPlane, guidePlanes.ToList(), sections[1]); // the second item is bottom middle curve
 
-            // 5 Connect the curves at each section. 
+            // -- 5 Connect the curves at each section. 
 
-            // 6 Loft an Cap the curves
+            // create a nested list of the curves sorted clockwise
+            List<List<Curve>> nestedSectionCurves = new List<List<Curve>>() {leftSections, middleTopSections, rightSections, middleBottomSections };
+            var organisedSections = FlipNested2DList(nestedSectionCurves);
+            // For concvenience, we flip the nested list to have all four curves on one plane in the same subList
+            var planeSectionCurves = CreatePlaneSections(organisedSections);
 
+            // -- 6 Loft an Cap the curves
+            Brep loftedBrep = Brep.CreateFromLoft(planeSectionCurves, Point3d.Unset,
+                    Point3d.Unset, LoftType.Normal, false)[0].CapPlanarHoles(0.001);
 
 
 
             // -- output --
         }
 
+
+        public Curve[,] FlipNested2DList(List<List<Curve>> nestedList)
+        {
+            // before we start, we want to ensure that each list has the same lenght
+            List<int> subLengths = nestedList.Select(lst => lst.Count).ToList();// List of lengths for each sublist
+            // in the below line we ensure that all sublist have the same length and return true if that is the case
+            bool testLength = (subLengths.Where(el => el == nestedList[0].Count).Count() == nestedList.Count) ? true : false;
+            if (!testLength)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Make sure the edge curves are longer then the guide curve.");
+            }
+
+            int rows = nestedList.Count;
+            int cols = nestedList[0].Count;
+            Curve[,] result = new Curve[cols, rows]; // instantiate an empty array
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    result[j, i] = nestedList[i][j];
+                }
+            }
+            return result;
+
+        }
         public Plane[] PlanesAlongCurve(Curve crv, int div)
         {
             //List<Plane> result = new List<Plane>();
@@ -130,7 +162,8 @@ namespace ParametricCamp2023SVVPrepare
                 if (intersection[0].IsPoint)
                 {
                     Point3d pt = intersection[0].PointA;
-                    Plane movedPlane = new Plane(pt, p.Normal);
+                    //Plane movedPlane = new Plane(pt, p.Normal);
+                    Plane movedPlane = new Plane(pt, p.XAxis, p.YAxis);
                     interPlanes.Add(movedPlane);
                 }
             }
@@ -145,30 +178,54 @@ namespace ParametricCamp2023SVVPrepare
             // https://discourse.mcneel.com/t/orient-function-in-rhinocommon/48914/9
             for (int i = 0; i < newPlanes.Count; i++)
             {
-                
-                // Choose Target points. 
-                // I use two points along the X-axis 
-                // since I wanted my shape to align with the X-axis
-                Plane toPlane = newPlanes[i];
 
-                Transform xFormMove = Transform.Translation(toPlane.Origin - refPlane.Origin); // Moving from origin to target on guide curve
-                Transform xFormScale = Transform.Identity; // we do not want to scale the geometry
-                
-                var v0 = refPlane.Normal;
-                var v1 = toPlane.Normal;
-                Transform xFormRotate = Transform.Rotation(v0, v1, sectionCurve.PointAtStart);
-                Transform xFormFinal = xFormMove * xFormScale * xFormRotate;
-                
-                Transform.ChangeBasis(refPlane.XAxis, refPlane.YAxis, refPlane.ZAxis, newPlanes[i].XAxis,
-                    newPlanes[i].YAxis, newPlanes[i].ZAxis);
-                //var trans = Transform.PlaneToPlane(refPlane, newPlanes[i]);
-                
-                orientedCurves.Add(sectionCurve.DuplicateCurve());
-                orientedCurves[i].Transform(xFormFinal);
+                Plane toPlane = newPlanes[i]; // the plane we want to move to. 
+
+                var trans = Transform.PlaneToPlane(refPlane, toPlane); // create the transformation
+
+                orientedCurves.Add(sectionCurve.DuplicateCurve()); // duplicate the section curve
+                orientedCurves[i].Transform(trans); // reorient the copied curve
             } 
 
             return orientedCurves;
 
+        }
+
+        public List<Curve> CreatePlaneSections(Curve[,] nestedSections)
+        {
+
+            List<Curve> planeSections = new List<Curve>();
+            int rows = nestedSections.GetLength(0);
+            int cols = nestedSections.GetLength(1);
+
+            for (int i = 0; i < rows; i++) // iterate through each plane
+            {
+                List<Curve> crvs = new List<Curve>(); // initiate new list of control points for polycurve
+                for (int j = 0; j < cols; j++)
+                {
+                    crvs.Add(nestedSections[i, j]); // add the current curve
+                    List<Point3d> endPts;
+                    if (j != (cols -1))
+                    {                   
+                        endPts = new List<Point3d>() { nestedSections[i, j].PointAtEnd,
+                            nestedSections[i, j + 1].PointAtStart };
+                    }
+                    else // at the final iteration we add the first point instead
+                    {
+                        endPts = new List<Point3d>() { nestedSections[i, j].PointAtEnd,
+                            nestedSections[i, 0].PointAtStart };
+                        
+                    }
+                    Curve connectingCurve = Curve.CreateControlPointCurve(endPts, 1);
+                    crvs.Add(connectingCurve);
+                }
+
+                // join all the curves
+                Curve planeSection = Curve.JoinCurves(crvs)[0];
+                planeSections.Add(planeSection);
+            }
+
+            return planeSections;
         }
 
         /// <summary>

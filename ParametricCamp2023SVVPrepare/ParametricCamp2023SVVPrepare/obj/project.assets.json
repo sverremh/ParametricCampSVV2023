@@ -8,11 +8,17 @@
           "RhinoCommon": "[7.13.21348.13001]"
         },
         "compile": {
-          "lib/net48/GH_IO.dll": {},
-          "lib/net48/Grasshopper.dll": {}
+          "lib/net48/GH_IO.dll": {
+            "related": ".XML"
+          },
+          "lib/net48/Grasshopper.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net48/_._": {}
+          "lib/net48/_._": {
+            "related": ".XML"
+          }
         },
         "build": {
           "build/Grasshopper.targets": {}
@@ -21,12 +27,18 @@
       "RhinoCommon/7.13.21348.13001": {
         "type": "package",
         "compile": {
-          "lib/net48/Eto.dll": {},
+          "lib/net48/Eto.dll": {
+            "related": ".xml"
+          },
           "lib/net48/Rhino.UI.dll": {},
-          "lib/net48/RhinoCommon.dll": {}
+          "lib/net48/RhinoCommon.dll": {
+            "related": ".XML"
+          }
         },
         "runtime": {
-          "lib/net48/_._": {}
+          "lib/net48/_._": {
+            "related": ".xml"
+          }
         },
         "build": {
           "build/RhinoCommon.targets": {}
@@ -78,24 +90,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\sverremh\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\sverremh\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\sverremh\\Source\\Repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj",
+      "projectUniqueName": "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj",
       "projectName": "ParametricCamp2023SVVPrepare",
-      "projectPath": "C:\\Users\\sverremh\\Source\\Repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj",
+      "projectPath": "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj",
       "packagesPath": "C:\\Users\\sverremh\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\sverremh\\Source\\Repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\obj\\",
+      "outputPath": "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
         "C:\\Users\\sverremh\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -127,7 +134,7 @@
             "version": "[7.13.21348.13001, )"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }
