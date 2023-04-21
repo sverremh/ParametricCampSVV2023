@@ -17,7 +17,7 @@ namespace ParametricCamp2023SVVPrepare
         public BridgePlateCurves()
           : base("2. BridgePlateCurves", "plate",
               "Create bridge plate from Curves",
-              "VVS", "BridgePlate")
+              "Parametric Camp SVV", "Bridge Components")
         {
         }
 
@@ -67,6 +67,8 @@ namespace ParametricCamp2023SVVPrepare
             // -- method --
 
             // -- 1: Divide the guide curve and create planes along the length
+            
+            /*
             Plane[] guidePlanes = PlanesAlongCurve(centerCurve, div); // get the frames along the curve. 
             
             // create xy tangents
@@ -85,6 +87,8 @@ namespace ParametricCamp2023SVVPrepare
             Plane[] testPlanes = guidePlanes.Zip(crossProduct, (plane, x) => new Plane(plane.Origin, x, Vector3d.ZAxis))
                 .ToArray();
 
+            */
+            List<Plane> guidePlanes = BridgeUtility.CreateSectionPlanesAlongCurve(centerCurve, div);
             // -- 2: Extend the curves with x percent of original length
             double curveExtension = 0.05;
             leftCurve = leftCurve.Extend(CurveEnd.Both, leftCurve.GetLength() * curveExtension, CurveExtensionStyle.Smooth);
@@ -152,11 +156,11 @@ namespace ParametricCamp2023SVVPrepare
             return result;
         }
 
-        public List<Plane> IntersectionPlanes(Curve crv, Plane[] pArray)
+        public List<Plane> IntersectionPlanes(Curve crv, List<Plane> pList)
         {
             List<Plane> interPlanes = new List<Plane>();
             
-            foreach (var p in pArray)
+            foreach (var p in pList)
             {
                 CurveIntersections intersection = Intersection.CurvePlane(crv, p, 0.001);
                 if (intersection[0].IsPoint)

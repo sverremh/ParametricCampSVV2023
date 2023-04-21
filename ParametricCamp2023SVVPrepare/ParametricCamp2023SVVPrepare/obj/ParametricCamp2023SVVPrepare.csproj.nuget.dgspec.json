@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj": {}
+    "C:\\Users\\sverremh\\Source\\Repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj": {
+    "C:\\Users\\sverremh\\Source\\Repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj",
+        "projectUniqueName": "C:\\Users\\sverremh\\Source\\Repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj",
         "projectName": "ParametricCamp2023SVVPrepare",
-        "projectPath": "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj",
+        "projectPath": "C:\\Users\\sverremh\\Source\\Repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj",
         "packagesPath": "C:\\Users\\sverremh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\obj\\",
+        "outputPath": "C:\\Users\\sverremh\\Source\\Repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\sverremh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -46,7 +50,7 @@
               "version": "[7.13.21348.13001, )"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

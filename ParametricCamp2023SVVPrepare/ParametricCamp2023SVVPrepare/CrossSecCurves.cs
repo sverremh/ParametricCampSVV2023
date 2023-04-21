@@ -15,7 +15,7 @@ namespace ParametricCamp2023SVVPrepare
         public CrossSecCurves()
           : base("1. CrossSecCurves", "cross_sec_curves",
               "Generate base curves for cross sections",
-              "SVV", "BridgePlate")
+              "Parametric Camp SVV", "Bridge Components")
         {
         }
 

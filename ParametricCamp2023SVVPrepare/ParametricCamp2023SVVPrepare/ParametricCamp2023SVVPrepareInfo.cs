@@ -7,7 +7,7 @@ namespace ParametricCamp2023SVVPrepare
 {
     public class ParametricCamp2023SVVPrepareInfo : GH_AssemblyInfo
     {
-        public override string Name => "ParametricCamp2023SVVPrepare";
+        public override string Name => "ParametricCamp2023SVV";
 
         //Return a 24x24 pixel bitmap to represent this GHA library.
         public override Bitmap Icon => null;
