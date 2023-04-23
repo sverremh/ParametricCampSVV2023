@@ -5,7 +5,9 @@ using System.Linq;
 using Eto.Forms;
 using Grasshopper;
 using Grasshopper.Kernel;
+using Rhino.ApplicationSettings;
 using Rhino.Geometry;
+using Rhino.Geometry.Intersect;
 
 namespace ParametricCamp2023SVVPrepare
 {
@@ -15,7 +17,7 @@ namespace ParametricCamp2023SVVPrepare
         /// Initializes a new instance of the BridgeReinforcement class.
         /// </summary>
         public BridgeReinforcement()
-          : base("BridgeReinforcement", "Nickname",
+          : base("3. BridgeReinforcement", "bridgeRebar",
               "Create reinforcement cables for bridge plate",
               "Parametric Camp SVV", "Bridge Components")
         {
@@ -30,11 +32,11 @@ namespace ParametricCamp2023SVVPrepare
             pManager.AddTextParameter("RebarPositions", "xy", "XY positions of rebar along guide curve",
                 GH_ParamAccess.list); // 1
             pManager.AddNumberParameter("Rebar Radius", "radius", "Radius of rebar channel", GH_ParamAccess.item, 0.5); // 2 Here I use a default value, meaning that the user does not have to specify this for the component to run
-            pManager.AddBrepParameter("Top of bridge deck.", "brep", "Top of bridge deck to project the curve on",
-                GH_ParamAccess.item);
+            pManager.AddBrepParameter("Top of bridge deck.", "breps", "Top of bridge deck to project the curve on",
+                GH_ParamAccess.list);
             ; // 3
             pManager.AddNumberParameter("Rebar Offsets", "dx", "List of guide curve offsets in local x-direction",
-                GH_ParamAccess.list, new List<double>(){0}); // 4
+                GH_ParamAccess.item, 0.0); // 4
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace ParametricCamp2023SVVPrepare
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBrepParameter("Rebar brep", "brep", "Shape of rebar channel", GH_ParamAccess.list); // 0
+            pManager.AddBrepParameter("Rebar brep", "brep", "Shape of rebar channel", GH_ParamAccess.item); // 0
         }
 
         /// <summary>
@@ -57,14 +59,14 @@ namespace ParametricCamp2023SVVPrepare
             Curve guideCurve = null; // 0 I can use "null" here because the Curve class is nullable, meaning that it has no value at all. https://learn.microsoft.com/en-us/dotnet/api/system.nullable?view=net-7.0
             List<string> rebarXYs = new List<string>(); // 1 Instantiate an empty list of rebar x-y coordinates.    
             double radius = 0; // 2 
-            Brep bridgeDeck = null;
-            List<double> curveOffsets= new List<double>(); // 4
+            List<Brep> bridgeDeck = new List<Brep>();
+            double curveOffset= 0.0 ; // 4
             // retrieve the input from Grasshopper
             if (!DA.GetData(0, ref guideCurve) || guideCurve is null) return; // 0. If the component fail to retrieve a curve from the first input we return. 
             if (!DA.GetDataList(1, rebarXYs)) return; // 1. 
             DA.GetData(2, ref radius); // 2
-            if (!DA.GetData(3, ref bridgeDeck)) return; // 3
-            DA.GetDataList(4, curveOffsets); // 4
+            if (!DA.GetDataList(3, bridgeDeck)) return; // 3
+            DA.GetData(4, ref curveOffset); // 4
 
             // -- control input --
             // before I start creating the reinforcement, I want to validate the input. There can be several checks. For example, the radius cannot be 0 or negative, 
@@ -88,55 +90,68 @@ namespace ParametricCamp2023SVVPrepare
 
             // -- method --
 
-            // start by project the guide curve to the top of the bridge plate. 
+            // Project the curve to xy-plane
+            Curve xyCurve = Curve.ProjectToPlane(guideCurve, Plane.WorldXY); // Projected curve
 
-            Curve[] projectedCurve = Curve.ProjectToBrep(guideCurve, bridgeDeck, Vector3d.ZAxis, 0.001);
-            if (projectedCurve.GetLength(0) == 0)
-            {
-                // no curve is found, reverse Z axis
-                projectedCurve = Curve.ProjectToBrep(guideCurve, bridgeDeck, - Vector3d.ZAxis, 0.001);
-            }
-            // Offset the points in local-x direction in the xy-plane. 
-
-            // Project points back up to top deck
-
-            // Offset down according to rebar cover list. 
-
-            // Create surface. 
-
+            // Get the rebar offsets at each input parameter
             List<string[]> decomposedCoords = rebarXYs.Select(coord => coord.Split(',')).ToList(); // split coords into strings and lines
             List<double> evalParams = decomposedCoords.Select(c => Double.Parse(c[0].ToString())).ToList();
             List<double> verticalRebarPositions = decomposedCoords.Select(c => Double.Parse(c[1].ToString())).ToList();
 
-            List<Plane> rebarPlanes = BridgeUtility.CreateSectionPlanesAtParameters(projectedCurve[0], evalParams.ToList());
 
+            // Create planes at the input parameters
+            List<Plane> rebarPlanes = BridgeUtility.CreateSectionPlanesAtParameters(xyCurve, evalParams.ToList());
+
+            // start by project the guide curve to the top of the bridge plate. 
+
+            // create the breps
             List<Brep> rebarBreps = new List<Brep>();
-            foreach (double dx in curveOffsets)
-            {
-                rebarBreps.Add(CreateRebarBrep(rebarPlanes, verticalRebarPositions, dx, radius));
+            // iterate through each curve offset in local x-dir
 
-            }
-
-
+            Brep rebarBrep = CreateRebarBrep(rebarPlanes, verticalRebarPositions, curveOffset, radius, bridgeDeck.ToArray());
+            
             // output data
-            DA.SetDataList(0, rebarBreps);
+            DA.SetData(0, rebarBrep);
 
 
         }
 
-        Brep CreateRebarBrep(List<Plane> circlePlanes, List<double> dyList, double dx, double r)
+        Brep CreateRebarBrep(List<Plane> circlePlanes, List<double> dyList, double dx, double r, Brep[] intersectBreps)
         {
-            
+
             List<Plane> movedPlanes = new List<Plane>();
+            // Move the planes in local x-dir from the guide curve planes
             for (int i = 0; i < circlePlanes.Count; i++)
             {
                 Plane p = circlePlanes[i]; // original Plane
-                Plane movedPlane = new Plane(new Point3d(p.OriginX + dx, p.OriginY, p.OriginZ + dyList[i]), p.XAxis, p.YAxis);
+                Plane movedPlane = new Plane(Point3d.Add(p.Origin, p.XAxis * dx), p.XAxis, p.YAxis); // offset the plane in local x-direction
                 movedPlanes.Add(movedPlane);
             }
-            List<NurbsCurve> rebarCircles = movedPlanes.Select(p => (new Circle(p, r)).ToNurbsCurve()).ToList(); // using Linq to create circles
+            // Create circles in all the planes
+            // Find the intersection point between the new planes and the brep
+            
+            List<Curve> CirclesOnBrep = new List<Curve>();
+
+            // find the intersection between the new plane points and the deck breps. 
+            List<Point3d> planeOrigins = movedPlanes.Select(pl => pl.Origin).ToList();
+            
+            // the intInds gives the index from the original list where there has been found an intersection. We need this to get the corresponding planes
+            Point3d[] intersectPts =  Intersection.ProjectPointsToBrepsEx(intersectBreps, planeOrigins, Vector3d.ZAxis, 0.001, out int[] intInds); // 
+            
+
+
+            for (int i = 0; i < intersectPts.Length; i++)
+            {
+                Point3d pt = Point3d.Add(intersectPts[i], Vector3d.ZAxis * dyList[intInds[i]]);
+                Plane pl = movedPlanes[intInds[i]];
+                //Point3d newO = pl.Origin + pt + Vector3d.Multiply(Vector3d.ZAxis, dyList[intInds[i]]);
+                Curve circle = new Circle(new Plane(pt, pl.XAxis, pl.YAxis), r).ToNurbsCurve();
+                CirclesOnBrep.Add(circle);
+                
+            }
+            
             // loft and cap 
-            Brep[] rebarBrep = Brep.CreateFromLoft(rebarCircles, Point3d.Unset, Point3d.Unset, LoftType.Tight, false);
+            Brep[] rebarBrep = Brep.CreateFromLoft(CirclesOnBrep, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
             
 
             return rebarBrep[0].CapPlanarHoles(0.001);

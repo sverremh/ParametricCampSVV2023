@@ -29,7 +29,7 @@ namespace ParametricCamp2023SVVPrepare
             pManager.AddCurveParameter("Center curve", "cCurve", "Middle curve of the road line", GH_ParamAccess.item) ;
             pManager.AddCurveParameter("Left curve", "lCurve", "Left curve of the bridge deck", GH_ParamAccess.item);
             pManager.AddCurveParameter("Right curve", "rCurve", "Right curve of the bridge deck", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Count", "count", "Number of divisions", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Count", "count", "Number of divisions", GH_ParamAccess.item, 50);
             pManager.AddCurveParameter("SectionCurves", "secCrvs", "Curves for the plate section", GH_ParamAccess.list);
             pManager.AddPlaneParameter("Plane", "p", "Reference plane for section curves. World XY by default", GH_ParamAccess.item, Plane.WorldXY); 
         }
@@ -39,7 +39,7 @@ namespace ParametricCamp2023SVVPrepare
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBrepParameter("Bridge plate", "plate", "Bridge plate", GH_ParamAccess.item); 
+            pManager.AddBrepParameter("Bridge plate", "plate", "Bridge plate", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -119,6 +119,7 @@ namespace ParametricCamp2023SVVPrepare
 
 
             // -- output --
+            DA.SetData(0, loftedBrep); // 0 
         }
 
 
