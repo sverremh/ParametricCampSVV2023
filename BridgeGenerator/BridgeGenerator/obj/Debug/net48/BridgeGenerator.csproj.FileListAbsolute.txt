@@ -1,0 +1,11 @@
+C:\Users\sverremh\AppData\Roaming\Grasshopper\Libraries\net48\BridgeGenerator.gha
+C:\Users\sverremh\AppData\Roaming\Grasshopper\Libraries\net48\BridgeGenerator.pdb
+C:\Users\sverremh\source\repos\ParametricCampSVV2023\BridgeGenerator\BridgeGenerator\obj\Debug\net48\BridgeGenerator.csproj.AssemblyReference.cache
+C:\Users\sverremh\source\repos\ParametricCampSVV2023\BridgeGenerator\BridgeGenerator\obj\Debug\net48\BridgeGenerator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sverremh\source\repos\ParametricCampSVV2023\BridgeGenerator\BridgeGenerator\obj\Debug\net48\BridgeGenerator.AssemblyInfoInputs.cache
+C:\Users\sverremh\source\repos\ParametricCampSVV2023\BridgeGenerator\BridgeGenerator\obj\Debug\net48\BridgeGenerator.AssemblyInfo.cs
+C:\Users\sverremh\source\repos\ParametricCampSVV2023\BridgeGenerator\BridgeGenerator\obj\Debug\net48\BridgeGenerator.csproj.CoreCompileInputs.cache
+C:\Users\sverremh\source\repos\ParametricCampSVV2023\BridgeGenerator\BridgeGenerator\obj\Debug\net48\BridgeGenerator.gha
+C:\Users\sverremh\source\repos\ParametricCampSVV2023\BridgeGenerator\BridgeGenerator\obj\Debug\net48\BridgeGenerator.pdb
+C:\Users\sverremh\AppData\Roaming\Grasshopper\Libraries\BridgeGenerator\net48\BridgeGenerator.gha
+C:\Users\sverremh\AppData\Roaming\Grasshopper\Libraries\BridgeGenerator\net48\BridgeGenerator.pdb

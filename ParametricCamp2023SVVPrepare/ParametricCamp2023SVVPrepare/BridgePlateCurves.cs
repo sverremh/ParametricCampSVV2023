@@ -118,7 +118,7 @@ namespace ParametricCamp2023SVVPrepare
         }
 
 
-        public Curve[,] FlipNested2DList(List<List<Curve>> nestedList)
+        Curve[,] FlipNested2DList(List<List<Curve>> nestedList)
         {
             // before we start, we want to ensure that each list has the same lenght
             List<int> subLengths = nestedList.Select(lst => lst.Count).ToList();// List of lengths for each sublist
@@ -142,7 +142,7 @@ namespace ParametricCamp2023SVVPrepare
             return result;
 
         }
-        public Plane[] PlanesAlongCurve(Curve crv, int div)
+        Plane[] PlanesAlongCurve(Curve crv, int div)
         {
             //List<Plane> result = new List<Plane>();
             var tList = crv.DivideByCount(div, true); // list of parameters
@@ -152,7 +152,7 @@ namespace ParametricCamp2023SVVPrepare
             return result;
         }
 
-        public List<Plane> IntersectionPlanes(Curve crv, Plane[] pArray)
+        List<Plane> IntersectionPlanes(Curve crv, Plane[] pArray)
         {
             List<Plane> interPlanes = new List<Plane>();
             
@@ -172,7 +172,7 @@ namespace ParametricCamp2023SVVPrepare
             return interPlanes;
         }
 
-        public List<Curve> ReorientedSectionCurves(Plane refPlane, List<Plane> newPlanes, Curve sectionCurve)
+        List<Curve> ReorientedSectionCurves(Plane refPlane, List<Plane> newPlanes, Curve sectionCurve)
         {
             List<Curve> orientedCurves = new List<Curve>(); // initiate empty list for the oriented curves
             // https://discourse.mcneel.com/t/orient-function-in-rhinocommon/48914/9
@@ -191,7 +191,7 @@ namespace ParametricCamp2023SVVPrepare
 
         }
 
-        public List<Curve> CreatePlaneSections(Curve[,] nestedSections)
+        private List<Curve> CreatePlaneSections(Curve[,] nestedSections)
         {
 
             List<Curve> planeSections = new List<Curve>();

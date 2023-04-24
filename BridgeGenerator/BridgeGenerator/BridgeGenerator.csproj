@@ -3,25 +3,18 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <Version>1.0</Version>
-    <Title>ParametricCamp2023SVVPrepare</Title>
-    <Description>Description of ParametricCamp2023SVVPrepare</Description>
-    <TargetExt>.gha</TargetExt>	 
+    <Title>BridgeGenerator</Title>
+    <Description>Description of BridgeGenerator</Description>
 	<OutputPath>C:\Users\$(UserName)\AppData\Roaming\Grasshopper\Libraries\$(MSBuildProjectName)</OutputPath>
+    <TargetExt>.gha</TargetExt>
   </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Grasshopper" Version="7.13.21348.13001" IncludeAssets="compile;build" />
   </ItemGroup>
   
-  <ItemGroup>
-    <Compile Update="CrossSecCurves.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
-  
   <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
+    <StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
     <StartArguments></StartArguments>
     <StartAction>Program</StartAction>
   </PropertyGroup>
