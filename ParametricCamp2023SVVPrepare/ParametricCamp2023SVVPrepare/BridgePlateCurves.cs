@@ -17,7 +17,7 @@ namespace ParametricCamp2023SVVPrepare
         public BridgePlateCurves()
           : base("2. BridgePlateCurves", "plate",
               "Create bridge plate from Curves",
-              "VVS", "BridgePlate")
+              "Parametric Camp SVV", "Bridge Components")
         {
         }
 
@@ -29,7 +29,7 @@ namespace ParametricCamp2023SVVPrepare
             pManager.AddCurveParameter("Center curve", "cCurve", "Middle curve of the road line", GH_ParamAccess.item) ;
             pManager.AddCurveParameter("Left curve", "lCurve", "Left curve of the bridge deck", GH_ParamAccess.item);
             pManager.AddCurveParameter("Right curve", "rCurve", "Right curve of the bridge deck", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Count", "count", "Number of divisions", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Count", "count", "Number of divisions", GH_ParamAccess.item, 50);
             pManager.AddCurveParameter("SectionCurves", "secCrvs", "Curves for the plate section", GH_ParamAccess.list);
             pManager.AddPlaneParameter("Plane", "p", "Reference plane for section curves. World XY by default", GH_ParamAccess.item, Plane.WorldXY); 
         }
@@ -39,7 +39,7 @@ namespace ParametricCamp2023SVVPrepare
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBrepParameter("Bridge plate", "plate", "Bridge plate", GH_ParamAccess.item); 
+            pManager.AddBrepParameter("Bridge plate", "plate", "Bridge plate", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -67,6 +67,8 @@ namespace ParametricCamp2023SVVPrepare
             // -- method --
 
             // -- 1: Divide the guide curve and create planes along the length
+            
+            /*
             Plane[] guidePlanes = PlanesAlongCurve(centerCurve, div); // get the frames along the curve. 
             
             // create xy tangents
@@ -85,6 +87,8 @@ namespace ParametricCamp2023SVVPrepare
             Plane[] testPlanes = guidePlanes.Zip(crossProduct, (plane, x) => new Plane(plane.Origin, x, Vector3d.ZAxis))
                 .ToArray();
 
+            */
+            List<Plane> guidePlanes = BridgeUtility.CreateSectionPlanesAlongCurve(centerCurve, div);
             // -- 2: Extend the curves with x percent of original length
             double curveExtension = 0.05;
             leftCurve = leftCurve.Extend(CurveEnd.Both, leftCurve.GetLength() * curveExtension, CurveExtensionStyle.Smooth);
@@ -115,10 +119,11 @@ namespace ParametricCamp2023SVVPrepare
 
 
             // -- output --
+            DA.SetData(0, loftedBrep); // 0 
         }
 
 
-        Curve[,] FlipNested2DList(List<List<Curve>> nestedList)
+        public Curve[,] FlipNested2DList(List<List<Curve>> nestedList)
         {
             // before we start, we want to ensure that each list has the same lenght
             List<int> subLengths = nestedList.Select(lst => lst.Count).ToList();// List of lengths for each sublist
@@ -142,7 +147,7 @@ namespace ParametricCamp2023SVVPrepare
             return result;
 
         }
-        Plane[] PlanesAlongCurve(Curve crv, int div)
+        public Plane[] PlanesAlongCurve(Curve crv, int div)
         {
             //List<Plane> result = new List<Plane>();
             var tList = crv.DivideByCount(div, true); // list of parameters
@@ -152,11 +157,11 @@ namespace ParametricCamp2023SVVPrepare
             return result;
         }
 
-        List<Plane> IntersectionPlanes(Curve crv, Plane[] pArray)
+        public List<Plane> IntersectionPlanes(Curve crv, List<Plane> pList)
         {
             List<Plane> interPlanes = new List<Plane>();
             
-            foreach (var p in pArray)
+            foreach (var p in pList)
             {
                 CurveIntersections intersection = Intersection.CurvePlane(crv, p, 0.001);
                 if (intersection[0].IsPoint)
@@ -172,7 +177,7 @@ namespace ParametricCamp2023SVVPrepare
             return interPlanes;
         }
 
-        List<Curve> ReorientedSectionCurves(Plane refPlane, List<Plane> newPlanes, Curve sectionCurve)
+        public List<Curve> ReorientedSectionCurves(Plane refPlane, List<Plane> newPlanes, Curve sectionCurve)
         {
             List<Curve> orientedCurves = new List<Curve>(); // initiate empty list for the oriented curves
             // https://discourse.mcneel.com/t/orient-function-in-rhinocommon/48914/9
@@ -191,7 +196,7 @@ namespace ParametricCamp2023SVVPrepare
 
         }
 
-        private List<Curve> CreatePlaneSections(Curve[,] nestedSections)
+        public List<Curve> CreatePlaneSections(Curve[,] nestedSections)
         {
 
             List<Curve> planeSections = new List<Curve>();

@@ -15,7 +15,7 @@ namespace ParametricCamp2023SVVPrepare
         public CrossSecCurves()
           : base("1. CrossSecCurves", "cross_sec_curves",
               "Generate base curves for cross sections",
-              "SVV", "BridgePlate")
+              "Parametric Camp SVV", "Bridge Components")
         {
         }
 
@@ -80,11 +80,12 @@ namespace ParametricCamp2023SVVPrepare
             double dxLeft = Math.Abs(leftVecs.Select(v => v.X).Max() - leftVecs.Select(v => v.X).Min()); 
             double dxRight = Math.Abs(rightVecs.Select(v => v.X).Max() - rightVecs.Select(v => v.X).Min());
 
-            // move the left and right points away from the mid points
-            leftVecs = leftVecs.Select(v => v - new Vector3d(Math.Abs(dxMid)/2 + dxLeft*1.5,0,0)) .ToList() ;
-            rightVecs = rightVecs.Select(v => v + new Vector3d(Math.Abs(dxMid)/2 + dxRight*1.5, 0, 0)).ToList();
+            // move the left and right points away from the mid points if we want to preview the results. 
+            //leftVecs = leftVecs.Select(v => v - new Vector3d(Math.Abs(dxMid)/2 + dxLeft*1.5,0,0)) .ToList() ;
+            //rightVecs = rightVecs.Select(v => v + new Vector3d(Math.Abs(dxMid)/2 + dxRight*1.5, 0, 0)).ToList();
 
 
+           
             // translate all the points to generate the base curves
             List<Point3d> centreTopPts = TranslatedPoints(basePlane, centreTopVecs); // get translated centre points
             List<Point3d> centreBottomPts = TranslatedPoints(basePlane, centreBottomVecs); // get translated centre points
@@ -93,16 +94,15 @@ namespace ParametricCamp2023SVVPrepare
 
 
             // create curves between points
+            
             Polyline centreTopCrv = new Polyline(centreTopPts);
             Polyline centreBottomCrv = new Polyline(centreBottomPts);
             Polyline leftCrv = new Polyline(leftPts);
             Polyline rightCrv = new Polyline(rightPts);
-
-                        
+            
 
             // collect all curves in list
             List<Polyline> lines = new List<Polyline>() {centreTopCrv, centreBottomCrv, leftCrv, rightCrv };
-
             
 
             // -- output
