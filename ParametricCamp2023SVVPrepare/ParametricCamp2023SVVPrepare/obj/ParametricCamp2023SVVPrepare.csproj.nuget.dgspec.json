@@ -40,6 +40,10 @@
         "net48": {
           "targetAlias": "net48",
           "dependencies": {
+            "GeometryGymIFC_Core": {
+              "target": "Package",
+              "version": "[0.2.15, )"
+            },
             "Grasshopper": {
               "include": "Compile, Build",
               "target": "Package",

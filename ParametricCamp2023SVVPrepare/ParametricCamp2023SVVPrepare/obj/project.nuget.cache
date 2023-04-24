@@ -1,11 +1,17 @@
 {
   "version": 2,
-  "dgSpecHash": "7bBjn/z14Gf/EW8cNi2/j5uJX4tWe4pbBBt7LHWnx8omKLuTXem2XM6ZeIdRTP8G5+r5QSk2GRb5Hkm5AxMnng==",
+  "dgSpecHash": "LansmP82V+PpoxDknO+NXTP2fFJKjj95TudJroNdymVnaDi6B/jb9zyZm7CWYGfpLfhP2vRpyWgjVHw/0jlJAw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare.csproj",
+  "projectFilePath": "C:\\Users\\sverremh\\source\\repos\\ParametricCampSVV2023\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVVPrepare\\ParametricCamp2023SVV.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\sverremh\\.nuget\\packages\\geometrygymifc_core\\0.2.15\\geometrygymifc_core.0.2.15.nupkg.sha512",
     "C:\\Users\\sverremh\\.nuget\\packages\\grasshopper\\7.13.21348.13001\\grasshopper.7.13.21348.13001.nupkg.sha512",
-    "C:\\Users\\sverremh\\.nuget\\packages\\rhinocommon\\7.13.21348.13001\\rhinocommon.7.13.21348.13001.nupkg.sha512"
+    "C:\\Users\\sverremh\\.nuget\\packages\\rhinocommon\\7.13.21348.13001\\rhinocommon.7.13.21348.13001.nupkg.sha512",
+    "C:\\Users\\sverremh\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
+    "C:\\Users\\sverremh\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
+    "C:\\Users\\sverremh\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\sverremh\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\sverremh\\.nuget\\packages\\system.text.encoding.codepages\\6.0.0\\system.text.encoding.codepages.6.0.0.nupkg.sha512"
   ],
   "logs": []
 }

@@ -10,11 +10,12 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="GeometryGymIFC_Core" Version="0.2.15" />
     <PackageReference Include="Grasshopper" Version="7.13.21348.13001" IncludeAssets="compile;build" />
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Update="CrossSecCurves.cs">
+    <Compile Update="Bridge Generator\CrossSecCurves.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>

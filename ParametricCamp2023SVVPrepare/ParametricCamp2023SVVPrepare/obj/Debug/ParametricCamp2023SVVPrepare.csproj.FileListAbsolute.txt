@@ -7,3 +7,4 @@ C:\Users\sverremh\source\repos\ParametricCampSVV2023\ParametricCamp2023SVVPrepar
 C:\Users\sverremh\source\repos\ParametricCampSVV2023\ParametricCamp2023SVVPrepare\ParametricCamp2023SVVPrepare\obj\Debug\ParametricCamp2023SVVPrepare.csproj.CoreCompileInputs.cache
 C:\Users\sverremh\source\repos\ParametricCampSVV2023\ParametricCamp2023SVVPrepare\ParametricCamp2023SVVPrepare\obj\Debug\ParametricCamp2023SVVPrepare.gha
 C:\Users\sverremh\source\repos\ParametricCampSVV2023\ParametricCamp2023SVVPrepare\ParametricCamp2023SVVPrepare\obj\Debug\ParametricCamp2023SVVPrepare.pdb
+C:\Users\sverremh\source\repos\ParametricCampSVV2023\ParametricCamp2023SVVPrepare\ParametricCamp2023SVVPrepare\obj\Debug\ParametricCamp2023SVVPrepare.csproj.CopyComplete

@@ -5,7 +5,7 @@ using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System.Linq;
 
-namespace ParametricCamp2023SVVPrepare
+namespace ParametricCamp2023SVV
 {
     public class CrossSecCurves : GH_Component
     {

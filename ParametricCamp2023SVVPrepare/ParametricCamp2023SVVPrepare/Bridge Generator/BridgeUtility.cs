@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Rhino.Geometry;
 
-namespace ParametricCamp2023SVVPrepare
+namespace ParametricCamp2023SVV
 {
     /// <summary>
     /// Static class to store methods used for several components.

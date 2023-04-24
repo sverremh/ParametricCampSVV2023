@@ -3,9 +3,9 @@ using Grasshopper.Kernel;
 using System;
 using System.Drawing;
 
-namespace ParametricCamp2023SVVPrepare
+namespace ParametricCamp2023SVV
 {
-    public class ParametricCamp2023SVVPrepareInfo : GH_AssemblyInfo
+    public class ParametricCamp2023SVVInfo : GH_AssemblyInfo
     {
         public override string Name => "ParametricCamp2023SVV";
 

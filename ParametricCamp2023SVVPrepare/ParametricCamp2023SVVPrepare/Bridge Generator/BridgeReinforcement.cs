@@ -9,7 +9,7 @@ using Rhino.ApplicationSettings;
 using Rhino.Geometry;
 using Rhino.Geometry.Intersect;
 
-namespace ParametricCamp2023SVVPrepare
+namespace ParametricCamp2023SVV
 {
     public class BridgeReinforcement : GH_Component
     {
